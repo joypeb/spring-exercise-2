@@ -34,6 +34,46 @@ public class UserDao {
         }
     }
 
+    public void deleteAll() {
+        try {
+            Connection c = connectionMaker.makeConnection();
+
+            PreparedStatement ps = c.prepareStatement(
+                    "DELETE FROM likelionDB.users"
+            );
+
+            ps.executeUpdate();
+
+            ps.close();
+            c.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public int getCount() {
+        try {
+            Connection c = connectionMaker.makeConnection();
+
+            PreparedStatement ps = c.prepareStatement(
+                    "SELECT COUNT(*) FROM likelionDB.users"
+            );
+
+            ResultSet rs = ps.executeQuery();
+
+            rs.next();
+            int count = rs.getInt(1);
+
+            rs.close();
+            ps.close();
+            c.close();
+
+            return count;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public User findById(String id) {
         try {
             Connection c = connectionMaker.makeConnection();

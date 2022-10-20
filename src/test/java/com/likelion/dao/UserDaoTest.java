@@ -20,31 +20,35 @@ class UserDaoTest {
     ApplicationContext context;
 
     UserDao userDao;
+    User u1;
+    User u2;
+    User u3;
     @BeforeEach
     public void setUp() {
         userDao = context.getBean("awsUserDao",UserDao.class);
+        this.u1 = new User("1","박은빈","pw1");
+        this.u2 = new User("2","박은빈2","pw2");
+        this.u3 = new User("3","ParkEunBin","pw3");
     }
 
     @Test
     public void test() throws SQLException, ClassCastException {
         userDao.deleteAll();
-        String id = "1";
-        userDao.add(new User(id,"test1","passwordTest"));
 
-        User user = userDao.findById(id);
+        userDao.add(u1);
+
+        User user = userDao.findById(this.u1.getId());
 
         assertNotNull(user);
-        assertEquals(id,user.getId());
-        assertEquals("test1",user.getName());
+        assertEquals(this.u1.getId(),user.getId());
+        assertEquals(this.u1.getName(),user.getName());
         assertEquals(1,userDao.getCount());
     }
 
 
     @Test
     public void testCount() {
-        User u1 = new User("1","박은빈","pw1");
-        User u2 = new User("2","박은빈2","pw2");
-        User u3 = new User("3","ParkEunBin","pw3");
+
 
         userDao.deleteAll();
         assertEquals(0,userDao.getCount());

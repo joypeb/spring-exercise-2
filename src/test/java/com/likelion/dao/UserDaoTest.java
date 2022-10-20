@@ -1,6 +1,7 @@
 package com.likelion.dao;
 
 import com.likelion.domain.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,14 @@ class UserDaoTest {
     @Autowired
     ApplicationContext context;
 
+    UserDao userDao;
+    @BeforeEach
+    public void setUp() {
+        userDao = context.getBean("awsUserDao",UserDao.class);
+    }
+
     @Test
     public void test() throws SQLException, ClassCastException {
-        UserDao userDao = context.getBean("awsUserDao",UserDao.class);
-
         userDao.deleteAll();
         String id = "1";
         userDao.add(new User(id,"test1","passwordTest"));
@@ -36,8 +41,6 @@ class UserDaoTest {
 
     @Test
     public void testCount() {
-        UserDao userDao = context.getBean("awsUserDao", UserDao.class);
-
         User u1 = new User("1","박은빈","pw1");
         User u2 = new User("2","박은빈2","pw2");
         User u3 = new User("3","ParkEunBin","pw3");

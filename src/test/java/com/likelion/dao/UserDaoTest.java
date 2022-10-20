@@ -33,6 +33,7 @@ class UserDaoTest {
 
         User user = userDao.findById(id);
 
+        assertNotNull(user);
         assertEquals(id,user.getId());
         assertEquals("test1",user.getName());
         assertEquals(1,userDao.getCount());

@@ -14,13 +14,31 @@ public class UserDao {
     }
 
     public void add(User user) {
-        AddStrategy addStrategy = new AddStrategy(user);
-        jdbcContextWithStatementStrategy(addStrategy);
+        StatementStrategy st = c -> {
+            try {
+                PreparedStatement ps = c.prepareStatement("INSERT INTO likelionDB.users(id, name, password) VALUES(?,?,?)");
+
+                ps.setString(1, user.getId());
+                ps.setString(2, user.getName());
+                ps.setString(3, user.getPassword());
+
+                return ps;
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        jdbcContextWithStatementStrategy(st);
     }
 
     public void deleteAll() {
-        DeleteAllStrategy deleteAllStrategy = new DeleteAllStrategy();
-        jdbcContextWithStatementStrategy(deleteAllStrategy);
+        StatementStrategy st = c -> {
+            try {
+                return c.prepareStatement("DELETE FROM likelionDB.users");
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        jdbcContextWithStatementStrategy(st);
     }
 
     public int getCount() {

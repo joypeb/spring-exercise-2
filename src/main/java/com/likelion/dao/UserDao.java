@@ -16,60 +16,13 @@ public class UserDao {
     public void add(User user) {
         Connection c = null;
         PreparedStatement ps =  null;
-        try {
-            // DB접속 (ex sql workbeanch실행)
-            c = connectionMaker.makeConnection();
-
-            // Query문 작성
-            ps = new AddStrategy().makePreparedStatement(c);
-
-            // Query문 실행
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if(ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        jdbcContextWithStatementStrategy(new AddStrategy(user));
     }
 
     public void deleteAll() {
         Connection c = null;
         PreparedStatement ps = null;
-        try {
-            c = connectionMaker.makeConnection();
-
-            ps = new DeleteAllStrategy().makePreparedStatement(c);
-
-            ps.executeUpdate();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if(ps != null) {
-                try {
-                    ps.close();
-                } catch (SQLException e) {
-                }
-            }
-            if(c != null) {
-                try {
-                    c.close();
-                } catch (SQLException e) {
-                }
-            }
-        }
+        jdbcContextWithStatementStrategy(new DeleteAllStrategy());
     }
 
     public int getCount() {
@@ -160,6 +113,34 @@ public class UserDao {
                         c.close();
                     } catch (SQLException e) {
                     }
+                }
+            }
+        }
+    }
+
+    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) {
+        Connection c = null;
+        PreparedStatement ps = null;
+        try {
+            c = connectionMaker.makeConnection();
+
+            ps = stmt.makePreparedStatement(c);
+
+            ps.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if(ps != null) {
+                try {
+                    ps.close();
+                } catch (SQLException e) {
+                }
+            }
+            if(c != null) {
+                try {
+                    c.close();
+                } catch (SQLException e) {
                 }
             }
         }

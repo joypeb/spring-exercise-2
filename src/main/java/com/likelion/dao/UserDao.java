@@ -13,9 +13,6 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
-    public static void main(String[] args) {
-    }
-
     public void add(User user) {
         Connection c = null;
         PreparedStatement ps =  null;
@@ -24,10 +21,7 @@ public class UserDao {
             c = connectionMaker.makeConnection();
 
             // Query문 작성
-            ps = c.prepareStatement("INSERT INTO likelionDB.users(id, name, password) VALUES(?,?,?);");
-            ps.setString(1, user.getId());
-            ps.setString(2, user.getName());
-            ps.setString(3, user.getPassword());
+            ps = new AddStrategy().makePreparedStatement(c);
 
             // Query문 실행
             ps.executeUpdate();
@@ -56,9 +50,7 @@ public class UserDao {
         try {
             c = connectionMaker.makeConnection();
 
-            ps = c.prepareStatement(
-                    "DELETE FROM likelionDB.users"
-            );
+            ps = new DeleteAllStrategy().makePreparedStatement(c);
 
             ps.executeUpdate();
 
@@ -171,5 +163,11 @@ public class UserDao {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        Factory factory = new Factory();
+        UserDao u = factory.awsUserDao();
+        System.out.println(u.getCount());
     }
 }

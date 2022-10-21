@@ -14,15 +14,13 @@ public class UserDao {
     }
 
     public void add(User user) {
-        Connection c = null;
-        PreparedStatement ps =  null;
-        jdbcContextWithStatementStrategy(new AddStrategy(user));
+        AddStrategy addStrategy = new AddStrategy(user);
+        jdbcContextWithStatementStrategy(addStrategy);
     }
 
     public void deleteAll() {
-        Connection c = null;
-        PreparedStatement ps = null;
-        jdbcContextWithStatementStrategy(new DeleteAllStrategy());
+        DeleteAllStrategy deleteAllStrategy = new DeleteAllStrategy();
+        jdbcContextWithStatementStrategy(deleteAllStrategy);
     }
 
     public int getCount() {

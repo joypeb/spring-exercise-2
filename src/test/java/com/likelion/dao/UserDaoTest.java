@@ -47,7 +47,7 @@ class UserDaoTest {
 
 
     @Test
-    public void testCount() {
+    public void testCount() throws SQLException {
 
 
         userDao.deleteAll();

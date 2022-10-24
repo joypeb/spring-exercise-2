@@ -8,26 +8,31 @@ import java.sql.*;
 
 public class UserDao {
     private DataSource datasource;
+    private JdbcContext jdbcContext;
 
     public UserDao(DataSource datasource) {
         this.datasource = datasource;
+        this.jdbcContext = new JdbcContext(datasource);
     }
 
-    public void add(User user) {
-        StatementStrategy st = c -> {
-            try {
-                PreparedStatement ps = c.prepareStatement("INSERT INTO likelionDB.users(id, name, password) VALUES(?,?,?)");
+    public void add(final User user) throws SQLException {
+        jdbcContext.workWithStatementStrategy(new StatementStrategy() {
+            @Override
+            public PreparedStatement makePreparedStatement(Connection c) {
+                PreparedStatement pstmt = null;
+                try {
+                    pstmt = c.prepareStatement("INSERT INTO likelionDB.users(id, name, password) VALUES(?,?,?)");
 
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
+                    pstmt.setString(1, user.getId());
+                    pstmt.setString(2, user.getName());
+                    pstmt.setString(3, user.getPassword());
 
-                return ps;
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+                    return pstmt;
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             }
-        };
-        jdbcContextWithStatementStrategy(st);
+        });
     }
 
     public void deleteAll() {

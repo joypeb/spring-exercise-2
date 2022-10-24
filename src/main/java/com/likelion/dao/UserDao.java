@@ -3,14 +3,14 @@ package com.likelion.dao;
 import com.likelion.domain.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 
+import javax.sql.DataSource;
 import java.sql.*;
-import java.util.Map;
 
 public class UserDao {
-    private ConnectionMaker connectionMaker = new AWSConnectionMaker();
+    private DataSource datasource;
 
-    public UserDao(ConnectionMaker connectionMaker) {
-        this.connectionMaker = connectionMaker;
+    public UserDao(DataSource datasource) {
+        this.datasource = datasource;
     }
 
     public void add(User user) {
@@ -46,7 +46,7 @@ public class UserDao {
         PreparedStatement ps = null;
         ResultSet rs = null;
         try {
-            c = connectionMaker.makeConnection();
+            c = datasource.getConnection();
 
             ps = c.prepareStatement(
                     "SELECT COUNT(*) FROM likelionDB.users"
@@ -89,7 +89,7 @@ public class UserDao {
         ResultSet rs = null;
         {
             try {
-                c = connectionMaker.makeConnection();
+                c = datasource.getConnection();
                 // Query문 작성
                 ps = c.prepareStatement("SELECT * FROM likelionDB.users WHERE id = ?");
                 ps.setString(1, id);
@@ -138,7 +138,7 @@ public class UserDao {
         Connection c = null;
         PreparedStatement ps = null;
         try {
-            c = connectionMaker.makeConnection();
+            c = datasource.getConnection();
 
             ps = stmt.makePreparedStatement(c);
 
